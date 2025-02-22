@@ -13,6 +13,7 @@ describe('Orange HRM Tests', () => {
     firstNameField: "[name='firstName']",
     lastNameField: "[name='lastName']",
     genericField: ".oxd-input--active",
+    genericCombobox: ".oxd-select-text--arrow",
     dateField: "[placeholder='yyyy-dd-mm']",
     dateCloseButton: ".--close",
     submitButton: "[type='submit']"
@@ -28,14 +29,24 @@ describe('Orange HRM Tests', () => {
     cy.get(selectorsList.myInfoButton).click()
     cy.get(selectorsList.firstNameField).clear().type('Bertrand')
     cy.get(selectorsList.lastNameField).clear().type('Russel')
-    cy.get(selectorsList.genericField).eq(3).clear().type('brussel') //Employe ID
+    cy.get(selectorsList.genericField).eq(3).clear().type('47390') //Employe ID
     cy.get(selectorsList.genericField).eq(4).clear().type('9999999') //Other ID
     cy.get(selectorsList.genericField).eq(5).clear().type('88888') //Driver's License Number
     cy.get(selectorsList.genericField).eq(6).clear().type('2026-30-01') //License Expiry Date
+    cy.get(selectorsList.genericField).eq(8).clear().type('444') //Custom Fields -> Test_field
     cy.get(selectorsList.dateCloseButton).click()
-    cy.get(selectorsList.submitButton).eq(0).click()
+    cy.get(selectorsList.submitButton).eq(0).click({ force: true })
+
+
     cy.get('body').should('contain', 'Successfully Updated')
     cy.get('.oxd-toast-close')
+
+
+    cy.get(selectorsList.genericCombobox).eq(0).click()
+    cy.get('.oxd-select-dropdown > :nth-child(6)').click()
+    cy.get(selectorsList.genericCombobox).eq(1).click()
+    cy.get('.oxd-select-dropdown > :nth-child(2)').click()
+
     //cy.get(selectorsList.genericField).eq(7).clear().type('1990-30-01') //Birthday
   })
   it('Login - Fail', () => {
