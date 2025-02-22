@@ -1,32 +1,38 @@
 import userData from '../fixtures/users/userData.json'
+import LoginPage from '../pages/loginPage'
+import DashboardPage from '../pages/dashboardPage'
+import MenuPage from '../pages/menuPage'
+
+const loginPage = new LoginPage()
+const dashboardPage = new DashboardPage()
+const menuPage = new MenuPage()
 
 describe('Orange HRM Tests', () => {
 
   const selectorsList = {
-    usernameField: "[name='username']",
-    passwordField: "[name='password']",
-    loginButton: "[type='submit']",
-    dashboardTitle: '.oxd-topbar-header-breadcrumb-module',
-    dashboardGrid: ".orangehrm-dashboard-grid",
-    wrongCredentialAlert: "[role='alert']",
-    myInfoButton: '[href="/web/index.php/pim/viewMyDetails"]',
+    
     firstNameField: "[name='firstName']",
     lastNameField: "[name='lastName']",
     genericField: ".oxd-input--active",
     genericCombobox: ".oxd-select-text--arrow",
+    secondItemCombobox: ".oxd-select-dropdown > :nth-child(6)",
+    thirdItemCombobox: ".oxd-select-dropdown > :nth-child(2)",
     dateField: "[placeholder='yyyy-dd-mm']",
     dateCloseButton: ".--close",
     submitButton: "[type='submit']"
   }
 
   it.only('User Info Update - Sucess', () => {
-    cy.visit('/auth/login')
-    cy.get(selectorsList.usernameField).type(userData.userSuccess.username)
-    cy.get(selectorsList.passwordField).type(userData.userSuccess.password)
-    cy.get(selectorsList.loginButton).click()
-    cy.get(selectorsList.dashboardGrid)
-    cy.location('pathname').should('equal', '/web/index.php/dashboard/index')
-    cy.get(selectorsList.myInfoButton).click()
+    loginPage.acessLoginPage()
+    loginPage.loginWithAnyUser(userData.userSuccess.username, userData.userSuccess.password)
+
+    dashboardPage.checkDashboardPage()
+
+    menuPage.accessMyInfo()
+
+    
+    
+    
     cy.get(selectorsList.firstNameField).clear().type('Bertrand')
     cy.get(selectorsList.lastNameField).clear().type('Russel')
     cy.get(selectorsList.genericField).eq(3).clear().type('47390') //Employe ID
@@ -37,17 +43,14 @@ describe('Orange HRM Tests', () => {
     cy.get(selectorsList.dateCloseButton).click()
     cy.get(selectorsList.submitButton).eq(0).click({ force: true })
 
-
     cy.get('body').should('contain', 'Successfully Updated')
     cy.get('.oxd-toast-close')
 
-
-    cy.get(selectorsList.genericCombobox).eq(0).click()
-    cy.get('.oxd-select-dropdown > :nth-child(6)').click()
-    cy.get(selectorsList.genericCombobox).eq(1).click()
-    cy.get('.oxd-select-dropdown > :nth-child(2)').click()
-
-    //cy.get(selectorsList.genericField).eq(7).clear().type('1990-30-01') //Birthday
+    cy.get(selectorsList.genericCombobox).eq(0).click({ force: true })
+    cy.get(selectorsList.secondItemCombobox).click()
+    cy.get(selectorsList.genericCombobox).eq(1).click({ force: true })
+    cy.get(selectorsList.thirdItemCombobox).click()
+   
   })
   it('Login - Fail', () => {
     cy.visit('/auth/login')
